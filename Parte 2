@@ -1,0 +1,173 @@
+#include <stdio.h>
+#include <conio.h>
+#include<stdlib.h>
+#include<string.h>
+
+
+typedef struct arv{
+	char info[100];
+	struct arv* esq;
+	struct arv* dir;
+}Arv;
+
+
+int vazia(Arv* a){
+	return a == NULL;
+}
+
+Arv* inicia(void){
+	return NULL;
+}
+
+Arv* cria(char *c, Arv* sae, Arv* sad){
+	Arv* p = (Arv*)malloc(sizeof(Arv));
+	strcpy(p->info, c);
+	p->esq = sae;
+	p->dir = sad;
+	return p;
+}
+
+void imprime(Arv* a){
+	if (!vazia(a)){
+		printf("%c ", a->info); /* mostra raiz */
+		imprime(a->esq); /* mostra sae */
+		imprime(a->dir); /* mostra sad */
+		printf("\n");
+	}
+}
+
+void imprimec(Arv* a){/* impressao na forma <  a <s>,<n> > em pre ordem*/
+	printf("<");
+	if (!vazia(a)){
+		printf("%c ", a->info); /* mostra raiz */
+		imprimec(a->esq); /* mostra sae */
+		printf(",");
+		imprimec(a->dir); /* mostra sad */
+	}
+	printf(">");
+}
+
+void imprimepo(Arv* a){/* impressao na forma Pos Ordem>*/
+	if (!vazia(a)){
+		imprimepo(a->esq); /* mostra sae */
+		imprimepo(a->dir); /* mostra sad */
+		printf("%s ", a->info); /* mostra raiz */
+	}
+}
+
+void imprimeos(Arv* a){/* impressao na forma Ordem simetrica*/
+	if (!vazia(a)){
+		imprimeos(a->esq); /* mostra sae */
+		printf("%s ", a->info); /* mostra raiz */
+		imprimeos(a->dir); /* mostra sad */
+	}
+}
+
+Arv* noAtuE(Arv* a){/* impressao na forma Ordem simetrica*/
+	if (!vazia(a)){
+		printf("%s ", a->info); /* mostra raiz */
+		return a->dir;
+	}
+	return NULL;
+}
+
+int vfolha(Arv* a){
+	return ((a->dir == NULL) && (a->esq == NULL));
+}
+
+Arv* libera(Arv* a){
+	if (!vazia(a)){
+		libera(a->esq); /* libera sae */
+		libera(a->dir); /* libera sad */
+		free(a); /* libera raiz */
+	}
+	return NULL;
+}
+
+int busca(Arv* a, char *c){
+	if (vazia(a))
+		return 0; /* árvore vazia: não encontrou */
+	else
+		return strcmp(a->info, c) || busca(a->esq, c) || busca(a->dir, c);
+}
+
+int intArt(Arv* a){
+	char sai = 'n';
+	char resp = 'n';
+	char novaresp[100];
+	char novaperg[100];
+	char antresp[100];
+	if (vfolha(a)){ // chegou na folha esquerda
+		printf("\nEh %s\n", a->info);
+		printf("Estou certo? \n");
+		resp = getch();
+		if ((resp == 'S') || (resp == 's')){
+			printf("Termina? \n");
+			sai = getch();
+			return sai;
+		}
+		else{
+			strcpy(antresp, a->info);
+			printf("\nO que voce pensou? ");
+			gets(novaresp);
+			printf("\nFaca uma pergunta que diferencie %s", antresp);
+			printf("\nde %s\n", novaresp);
+			gets(novaperg);
+			printf("\nA resposta para %s ", antresp);
+			printf("\nsera Sim ou Nao?\n");
+			resp = getch();
+			if ((resp == 'S') || (resp == 's')){
+				strcpy(a->info, novaperg);
+				Arv* sim = cria(antresp, inicia(), inicia());
+				Arv* nao = cria(novaresp, inicia(), inicia());
+				a->esq = sim;
+				a->dir = nao;
+			}
+			else{
+				strcpy(a->info, novaperg);
+				Arv* sim = cria(novaresp, inicia(), inicia());
+				Arv* nao = cria(antresp, inicia(), inicia());
+				a->esq = sim;
+				a->dir = nao;
+			}
+			printf("Desiste? \n");
+			sai = getch();
+			return sai;
+		}
+	}
+	else{
+		printf("\n%s ", a->info); /* mostra raiz */
+		resp = getch();
+		if ((resp == 'S') || (resp == 's'))
+			sai = intArt(a->esq);
+		else
+			sai = intArt(a->dir);
+	}
+}
+
+void main(){
+	char sai = 'n';
+	char resp = 'n';
+	char novaresp[100];
+	char novaperg[100];
+	char antresp[100];
+
+	Arv* a = cria("Tem listras?",
+		cria("Zebra", inicia(), inicia()),
+		cria("Cavalo", inicia(), inicia()));
+
+	while (sai == 'n'){
+		printf("\n%s ", a->info); /* mostra raiz */
+		resp = getch();
+		if ((resp == 'S') || (resp == 's'))
+			sai = intArt(a->esq);
+		else
+			sai = intArt(a->dir);
+	}
+	imprimepo(a);
+	printf("\n");
+	getch();
+	printf("\n");
+	getch();
+
+}
