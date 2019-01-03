@@ -1,11 +1,12 @@
 # Meus-conhecimentos
 Um pouco do que aprendi na faculdade
+
 #include <stdio.h>
 #include<conio.h>
 #include<string.h>
 
 void main(){
-   // char nome;
+   //char nome;
     int idade, valor;
 
     //printf("ENTRE COM o nome\t");
